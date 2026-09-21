@@ -21,31 +21,30 @@ jobs:
           which aarch64-none-elf-g++ || true
           which cmake || true
           which ninja || true
-          find /opt/devkitpro -maxdepth 3 -type f -name "aarch64-none-elf-g++" -print || true
-          find /opt/devkitpro -maxdepth 3 -type f -name "aarch64-none-elf-gcc" -print || true
+          find /opt/devkitpro -maxdepth 4 -type f -name "aarch64-none-elf-g++" -print || true
+          find /opt/devkitpro -maxdepth 4 -type f -name "aarch64-none-elf-gcc" -print || true
           ls -la /opt/devkitpro || true
           ls -la /opt/devkitpro/devkitA64/bin || true
           ls -la /opt/devkitpro/portlibs/switch/lib || true
 
       - name: Configure
-        working-directory: switchiptv-1.0.8
         run: |
           cmake -S . -B build-switch -G Ninja \
             -DPLATFORM_SWITCH=ON \
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build NRO
-        working-directory: switchiptv-1.0.8
         run: |
           cmake --build build-switch -j2
 
       - name: Find NRO
         run: |
-          find switchiptv-1.0.8 -name "*.nro" -print
+          find . -name "*.nro" -print
 
       - name: Upload NRO
         uses: actions/upload-artifact@v4
         with:
           name: switchiptv-1.0.8-HUD-AUDIO-SUBS-REFRESH
-          path: switchiptv-1.0.8/**/*.nro
+          path: |
+            **/*.nro
           if-no-files-found: error
