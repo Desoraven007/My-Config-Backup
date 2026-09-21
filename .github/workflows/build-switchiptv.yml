@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     container:
       image: devkitpro/devkita64:latest
 
@@ -13,18 +14,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Check toolchain
         run: |
-          dkp-pacman -Syu --noconfirm
-          dkp-pacman -S --needed --noconfirm \
-            switch-curl \
-            switch-libmpv \
-            switch-ffmpeg \
-            switch-glfw \
-            switch-mesa \
-            cmake \
-            ninja \
-            git
+          echo "DEVKITPRO=$DEVKITPRO"
+          echo "DEVKITA64=$DEVKITA64"
+          which aarch64-none-elf-g++
+          which cmake || true
+          which ninja || true
+          ls -la /opt/devkitpro
+          ls -la /opt/devkitpro/portlibs/switch/lib || true
 
       - name: Configure
         working-directory: switchiptv-1.0.8
