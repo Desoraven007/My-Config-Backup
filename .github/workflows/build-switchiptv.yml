@@ -18,10 +18,13 @@ jobs:
         run: |
           echo "DEVKITPRO=$DEVKITPRO"
           echo "DEVKITA64=$DEVKITA64"
-          which aarch64-none-elf-g++
+          which aarch64-none-elf-g++ || true
           which cmake || true
           which ninja || true
-          ls -la /opt/devkitpro
+          find /opt/devkitpro -maxdepth 3 -type f -name "aarch64-none-elf-g++" -print || true
+          find /opt/devkitpro -maxdepth 3 -type f -name "aarch64-none-elf-gcc" -print || true
+          ls -la /opt/devkitpro || true
+          ls -la /opt/devkitpro/devkitA64/bin || true
           ls -la /opt/devkitpro/portlibs/switch/lib || true
 
       - name: Configure
