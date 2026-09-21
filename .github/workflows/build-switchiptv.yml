@@ -1,1 +1,50 @@
+name: Build SwitchIPTV HUD Mod
 
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkita64:latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          dkp-pacman -Syu --noconfirm
+          dkp-pacman -S --needed --noconfirm \
+            switch-curl \
+            switch-libmpv \
+            switch-ffmpeg \
+            switch-glfw \
+            switch-mesa \
+            cmake \
+            ninja \
+            git
+
+      - name: Configure
+        working-directory: switchiptv-1.0.8
+        run: |
+          cmake -S . -B build-switch -G Ninja \
+            -DPLATFORM_SWITCH=ON \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build NRO
+        working-directory: switchiptv-1.0.8
+        run: |
+          cmake --build build-switch -j2
+
+      - name: Find NRO
+        run: |
+          find switchiptv-1.0.8 -name "*.nro" -print
+
+      - name: Upload NRO
+        uses: actions/upload-artifact@v4
+        with:
+          name: switchiptv-1.0.8-HUD-AUDIO-SUBS-REFRESH
+          path: switchiptv-1.0.8/**/*.nro
+          if-no-files-found: error
